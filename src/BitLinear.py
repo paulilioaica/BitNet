@@ -11,7 +11,6 @@ class BitLinear(nn.Linear):
         self.in_features = in_features
         self.out_features = out_features
         self.gamma_forward = nn.Parameter(torch.ones(in_features))
-        self.beta_forward = nn.Parameter(torch.ones(out_features))
     
     def get_binary_weight(self):
         Wb = self.binarize(self.weight)
