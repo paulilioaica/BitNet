@@ -1,7 +1,9 @@
 ﻿# BitNet
 
 ## Introduction
-In this project, a popular paper BitNet from Microsoft is implemented. [BitNet 1.58 bits](https://arxiv.org/pdf/2402.17764.pdf). The paper introduces a novel technique called BitLinear, which utilizes binary weights in the linear layer.
+In this project, a popular paper BitNet from Microsoft is implemented [BitNet 1.58 bits(https://arxiv.org/pdf/2402.17764.pdf).
+
+The paper introduces a novel technique called BitLinear, which utilizes binary weights in the linear layer.
 
 ![](https://arxiv.org/html/2402.17764v1/x2.png)
 
