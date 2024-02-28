@@ -17,14 +17,14 @@ The repository is organized as follows:
 - `test/`: Includes notebooks or scripts for running experiments and comparing results.
 
 ## Implementation
-We start by implementing the BitLinear layer, which replaces the traditional linear layer in the neural network architecture. We provide detailed explanations and code snippets in the `src/` directory and testing in `src/`
+The implementation starts with the BitLinear layer, which replaces the traditional linear layer in the neural network architecture. Detailed explanations and code snippets  are provided in the `src/` directory and testing in `src/`
 
 
 ## Transformer Implementation
 This repo's aim is to implement a whole **Transformer** using BitLinear's logic and comparing it side by side to a regular floating point **Transformer**.
 
-## Comparing Results
-To evaluate the performance of BitNet, we compare it to a regular implementation of the Transformer architecture. We conduct experiments on various datasets and measure metrics such as accuracy, training time, and memory usage. The results and analysis can be found in the `experiments/` directory.
+## Future work -- Comparing Results
+To evaluate the performance of BitNet, it's compared it to a regular implementation of the Transformer architecture. Experiments are conducted on various datasets and measure metrics such as accuracy, training time, and memory usage. The results and analysis can be found in the `experiments/` directory.
 
 
 ## Results
