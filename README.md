@@ -37,27 +37,25 @@ __This is a test to see the binary optimization in comparison with floating poin
 
 ```python
 from torch import optim
-#now let's optimize the binary layer on outputting all ones
 
-# create a binary layer
-binary_linear = BitLinear(10, 1)
-# create an optimizer
-optimizer = optim.SGD(binary_linear.parameters(), lr=0.01)
-# create a loss function
-criterion = nn.BCEWithLogitsLoss()
-# pass dummy data
-x = torch.rand(10)
+#now let's optimize the binary layer
 
-# now lets update the weights
+bitlayer = BitLinear(10, 10)
+
+#train the model to output the same input
+train_loss = []
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(bitlayer.parameters(), lr=0.001)
 for i in range(1000):
-    # first we need to zero the gradients
-    optimizer.zero_grad()
-    # then we can update the weights
-    output = binary_linear(x)
-    loss = criterion(output, torch.ones(1))
+    input = torch.randn(10)
+    output = bitlayer(input)
+    loss = criterion(output, input)
     loss.backward()
     optimizer.step()
-    print(loss.item())
+    optimizer.zero_grad()
+    train_loss.append(loss.item())
+    
+
 ```
 
 Finally, we test the output by multiplying both the **float** weight and **binary** weight with the same input
@@ -78,9 +76,5 @@ non_binary_weights = binary_linear.weight
 print(F.linear(x, non_binary_weights, binary_linear.bias))
 
 ```
-```terminal
-tensor([3.2173], grad_fn=<SqueezeBackward4>)
-tensor([3.2173], grad_fn=<SqueezeBackward4>)
-```
-
+![](/media/output.png)
 
