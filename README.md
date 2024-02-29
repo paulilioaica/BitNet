@@ -6,7 +6,7 @@ This project is an implementation of a popular paper BitNet from Microsoft [BitN
 The paper introduces a novel technique called BitLinear, which utilizes binary weights in the linear layer.
 
 ![](https://arxiv.org/html/2402.17764v1/x2.png)
-
+![](https://huggingface.co/shi3z/BitNetWikipedia110M/resolve/main/static/bitnet.png)
 
  The implemention the BitLinear layer should then be compared to a regular implementation.
  
@@ -40,14 +40,14 @@ from torch import optim
 
 #now let's optimize the binary layer
 
-bitlayer = BitLinear(10, 10)
+bitlayer = BitLinear(100, 10)
 
 #train the model to output the same input
 train_loss = []
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(bitlayer.parameters(), lr=0.001)
 for i in range(1000):
-    input = torch.randn(10)
+    input = torch.randn(100)
     output = bitlayer(input)
     loss = criterion(output, input)
     loss.backward()
@@ -55,25 +55,6 @@ for i in range(1000):
     optimizer.zero_grad()
     train_loss.append(loss.item())
     
-
-```
-
-Finally, we test the output by multiplying both the **float** weight and **binary** weight with the same input
-
-```python
-
-
-x = torch.rand(10)
-
-#first regular pass with binary weights form __forward__ implementation
-
-print(binary_linear(x)) 
-
-
-#now pass the regular float weights
-non_binary_weights = binary_linear.weight
-
-print(F.linear(x, non_binary_weights, binary_linear.bias))
 
 ```
 ![](/media/output.png)
