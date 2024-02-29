@@ -10,7 +10,8 @@ class BitLinear(nn.Linear):
         self.b = b
         self.in_features = in_features
         self.out_features = out_features
-        self.gamma_forward = nn.Parameter(torch.ones(in_features))
+        self.gamma_forward = nn.Parameter(torch.ones(in_features), requires_grad=True)
+        self.beta = nn.Parameter(torch.zeros(out_features), requires_grad=True)
     
     def get_binary_weight(self):
         Wb = self.binarize(self.weight)
@@ -30,28 +31,31 @@ class BitLinear(nn.Linear):
         W = W + (W_bin - W).detach()  # STE for the rounding operation  
         return torch.nn.Parameter(W, requires_grad=True)  
     
-def forward(self, input):
-    # Ensure input is at least 2D
-    if input.dim() == 1:
-        input = input.unsqueeze(1)
+    def forward(self, input):
+        # Ensure input is at least 2D
+        if input.dim() == 1:
+            input = input.unsqueeze(0)
+        
+        input_norm = F.layer_norm(input, (self.in_features,))
 
-    input_norm = F.layer_norm(input, (self.in_features,))
+        # Absmax Quantization
+        quant_scale = torch.max(torch.abs(input_norm), dim=1, keepdim=True).values
+        input_quant = torch.sign(input_norm) * (quant_scale / self.gamma_forward)
+        
+        weights_bin = self.get_binary_weight()
 
-    # Absmax Quantization
-    quant_scale = torch.max(torch.abs(input_norm), dim=1, keepdim=True).values
-    input_quant = torch.sign(input_norm) * (quant_scale / self.gamma_forward)
-    
-    weights_bin = self.get_binary_weight()
+        # Calculate the positive and negative parts of the weight
+        weight_pos = torch.clamp(weights_bin, min=0)
+        weight_neg = torch.clamp(weights_bin, max=0)
 
-    # Calculate the positive and negative parts of the weight
-    weight_pos = torch.clamp(weights_bin, min=0)
-    weight_neg = torch.clamp(weights_bin, max=0)
+        # Calculate the output as the sum of the positive and negative parts
+        output_pos = torch.sum(input_quant * weight_pos, dim=1)
+        output_neg = torch.sum(input_quant * weight_neg, dim=1)
+        output = output_pos + output_neg
 
-    # Calculate the output as the sum of the positive and negative parts
-    output_pos = torch.sum(input_quant * weight_pos, dim=1)
-    output_neg = torch.sum(input_quant * weight_neg, dim=1)
-    output = output_pos + output_neg
+        # Dequantize the output
+        output = output * self.beta
 
 
-    return output
+        return output
 
