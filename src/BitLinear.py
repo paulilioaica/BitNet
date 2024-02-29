@@ -24,7 +24,6 @@ class BitLinear(nn.Linear):
         quant_scale = torch.max(torch.abs(input_norm), dim=1, keepdim=True).values
         input_quant = torch.sign(input_norm) * (quant_scale / self.gamma_forward)
         
-        # Add LoRA weights to the original weights
         binary_weight = self.binarize(self.weight)
 
         output = torch.matmul(input_quant, binary_weight.t())
